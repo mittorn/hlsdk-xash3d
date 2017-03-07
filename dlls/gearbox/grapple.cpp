@@ -546,11 +546,9 @@ void CGrapple::CreateBeam( CBaseEntity* pTongueTip )
 	if (m_pBeam)
 	{
 	m_pBeam->PointsInit(pTongueTip->pev->origin, pev->origin);
-	m_pBeam->EntsInit( m_pTip->entindex(), m_pPlayer->entindex() );
 	m_pBeam->SetFlags( BEAM_FSOLID );
 	m_pBeam->SetBrightness( 100.0 );
 	m_pBeam->SetEndAttachment( 1 );
-	m_pBeam->GetSpawnFlags() |= SF_BEAM_TEMPORARY;
 	}
 #endif
 }

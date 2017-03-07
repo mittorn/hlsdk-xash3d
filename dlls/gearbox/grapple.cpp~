@@ -550,7 +550,6 @@ void CGrapple::CreateBeam( CBaseEntity* pTongueTip )
 	m_pBeam->SetFlags( BEAM_FSOLID );
 	m_pBeam->SetBrightness( 100.0 );
 	m_pBeam->SetEndAttachment( 1 );
-	m_pBeam->GetSpawnFlags() |= SF_BEAM_TEMPORARY;
 	}
 #endif
 }
