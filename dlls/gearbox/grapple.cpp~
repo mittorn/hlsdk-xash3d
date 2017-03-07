@@ -21,6 +21,10 @@
 #include "nodes.h"
 #include "player.h"
 #include "gamerules.h"
+#include "soundent.h"
+#include "effects.h"
+#include "customentity.h"
+#include "osprey.h"
 
 #ifndef CLIENT_DLL
 #include "grapple_tonguetip.h"
