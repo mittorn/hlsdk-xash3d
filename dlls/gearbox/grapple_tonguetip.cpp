@@ -61,7 +61,7 @@ CGrappleTonguetip* CGrappleTonguetip::CreateTip(entvars_t *pevOwner, Vector vecS
 	pTonguetip->Spawn();
 
 	UTIL_SetOrigin(pTonguetip->pev, vecStart);
-	pTonguetip->pev->velocity = vecVelocity*2;
+	pTonguetip->pev->velocity = vecVelocity*3;
 	pTonguetip->pev->owner = ENT(pevOwner);
 	pTonguetip->m_pMyGrappler = GetClassPtr((CGrapple*)pevOwner);
 	pTonguetip->SetThink(&CGrappleTonguetip::FlyThink);
@@ -110,7 +110,6 @@ void CGrappleTonguetip::TipTouch(CBaseEntity *pOther)
 	int hitFlags = pOther->pev->flags;
 
 	m_pMyGrappler->m_fTipHit	= TRUE;
-	m_pMyGrappler->m_iHitFlags	= hitFlags;
 
 	if (!pOther)
 	{
