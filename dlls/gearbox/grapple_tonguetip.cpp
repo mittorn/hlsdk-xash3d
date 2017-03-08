@@ -112,7 +112,7 @@ void CGrappleTonguetip::TipTouch(CBaseEntity *pOther)
 	m_pMyGrappler->m_fTipHit	= TRUE;
 	m_pMyGrappler->m_iHitFlags	= hitFlags;
 
-	if (hitFlags & (FL_MONSTER))
+	if ((FL_MONSTER|FL_CLIENT))
 	{
 		// Set player attached flag.
 		if (pOther->IsPlayer())
