@@ -61,7 +61,7 @@ CGrappleTonguetip* CGrappleTonguetip::CreateTip(entvars_t *pevOwner, Vector vecS
 	pTonguetip->Spawn();
 
 	UTIL_SetOrigin(pTonguetip->pev, vecStart);
-	pTonguetip->pev->velocity = vecVelocity*2;
+	pTonguetip->pev->velocity = vecVelocity;
 	pTonguetip->pev->owner = ENT(pevOwner);
 	pTonguetip->m_pMyGrappler = GetClassPtr((CGrapple*)pevOwner);
 	pTonguetip->SetThink(&CGrappleTonguetip::FlyThink);
@@ -112,7 +112,7 @@ void CGrappleTonguetip::TipTouch(CBaseEntity *pOther)
 	m_pMyGrappler->m_fTipHit	= TRUE;
 	m_pMyGrappler->m_iHitFlags	= hitFlags;
 
-	if (pOther->IsAlive())
+	if (hitFlags & (FL_CLIENT | FL_MONSTER))
 	{
 		// Set player attached flag.
 		if (pOther->IsPlayer())
