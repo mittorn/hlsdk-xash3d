@@ -112,24 +112,34 @@ void CGrappleTonguetip::TipTouch(CBaseEntity *pOther)
 	m_pMyGrappler->m_fTipHit	= TRUE;
 	m_pMyGrappler->m_iHitFlags	= hitFlags;
 
-	if (hitFlags & (FL_MONSTER|FL_CLIENT|FL_NOTARGET))
-	{
-		// Set player attached flag.
-		if (pOther->IsPlayer())
-			((CBasePlayer*)pOther)->m_afPhysicsFlags |= PFLAG_ATTACHED;
-
-		pev->movetype = MOVETYPE_FOLLOW;
-		pev->aiment = ENT(pOther->pev);
-		SetThink(&CGrappleTonguetip::HitThink);
-		m_pMyGrappler->OnTongueTipHitEntity(pOther);
-		pev->nextthink = gpGlobals->time + 0.1f;
-	}
-	else
+	if (!pOther)
 	{
 		pev->velocity = Vector(0, 0, 0);
 		pev->movetype = MOVETYPE_NONE;
 		pev->gravity = 0.0f;
 		m_pMyGrappler->OnTongueTipHitSurface(tr.vecEndPos);
+	}
+	else
+	{
+		// Set player attached flag.
+		if (pOther->IsPlayer())
+		{
+			((CBasePlayer*)pOther)->m_afPhysicsFlags |= PFLAG_ATTACHED;
+	
+			pev->movetype = MOVETYPE_FOLLOW;
+			pev->aiment = ENT(pOther->pev);
+			SetThink(&CGrappleTonguetip::HitThink);
+			m_pMyGrappler->OnTongueTipHitEntity(pOther);
+			pev->nextthink = gpGlobals->time + 0.1f;
+		}
+		if ((FL_NOTARGET))
+		{
+			pev->movetype = MOVETYPE_FOLLOW;
+			pev->aiment = ENT(pOther->pev);
+			SetThink(&CGrappleTonguetip::HitThink);
+			m_pMyGrappler->OnTongueTipHitEntity(pOther);
+			pev->nextthink = gpGlobals->time + 0.1f;
+		}
 	}
 
 	EMIT_SOUND_DYN(ENT(pev), CHAN_VOICE, "weapons/bgrapple_impact.wav", 1, ATTN_NORM, 0, 100);
