@@ -1339,6 +1339,41 @@ private:
 	unsigned short m_usPenguinFire;
 };
 
+
+class CShockrifle : public CBasePlayerWeapon
+{
+public:
+	void Spawn( void );
+	void Precache( void );
+	int iItemSlot( void ) { return 7; }
+	int GetItemInfo(ItemInfo *p);
+	int AddToPlayer( CBasePlayer *pPlayer );
+
+	void PrimaryAttack( void );
+	BOOL Deploy( void );
+	BOOL IsUseable( void );
+	void Holster( int skiplocal = 0 );
+	void Reload( void );
+	void WeaponIdle( void );
+
+	virtual BOOL UseDecrement( void )
+	{ 
+#if defined( CLIENT_WEAPONS )
+		return TRUE;
+#else
+		return FALSE;
+#endif
+	}
+private:
+
+	float m_flNextAnimTime;
+	float m_flRechargeTime;
+	int m_iFirePhase;// don't save me.
+	int m_iBeam;// don't save me.
+	unsigned short m_usShockFire;
+};
+
+
 class CPipeWrench : public CBasePlayerWeapon
 {
 public:
