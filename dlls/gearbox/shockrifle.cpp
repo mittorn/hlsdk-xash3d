@@ -22,6 +22,7 @@
 #include "nodes.h"
 #include "player.h"
 #include "gamerules.h"
+#include "effects.h"
 
 
 enum shockrifle_e {
@@ -134,7 +135,7 @@ void CShockrifle::PrimaryAttack()
 	if( m_pPlayer->pev->waterlevel == 3 )
 	{
 		EMIT_SOUND( ENT( pev ), CHAN_ITEM, "weapons/shock_discharge.wav", 1, ATTN_NORM );
-		RadiusDamage(pev->origin, m_pPlayer, m_pPlayer, m_pPlayer->m_rgAmmo[ m_iPrimaryAmmoType ] * 100,CLASS_NONE, DMG_ALWAYSGIB | DMG_BLAST );
+		RadiusDamage(pev->origin, pev, pev, m_pPlayer->m_rgAmmo[ m_iPrimaryAmmoType ] * 100,CLASS_NONE, DMG_ALWAYSGIB | DMG_BLAST );
 		m_pPlayer->m_rgAmmo[ m_iPrimaryAmmoType ] = 0;
 		return;
 	}
@@ -172,7 +173,7 @@ void CShockrifle::PrimaryAttack()
 #else
 	flags = 0;
 #endif
-	pev->effects | = EF_MUZZLEFLASH;
+	pev->effects = EF_MUZZLEFLASH;
 
 	PLAYBACK_EVENT_FULL(flags, m_pPlayer->edict(), m_usShockFire, 0.0, (float *)&g_vecZero, (float *)&g_vecZero, 0.0, 0.0, 0, 0, 0, 0);
 
