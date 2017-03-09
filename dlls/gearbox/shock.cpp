@@ -27,7 +27,9 @@
 #include	"decals.h"
 #include	"soundent.h"
 #include	"game.h"
+#include "player.h"
 #include	"weapons.h"
+#include "gamerules.h" 
 
 #define SHOCK_BEAM_LENGTH		48
 #define SHOCK_BEAM_LENGTH_HALF	SHOCK_BEAM_LENGTH * 0.5f
@@ -56,6 +58,7 @@ public:
 	void ComputeBeamPositions(const Vector& vel, Vector* pos1, Vector* pos2);
 
 	CBeam *m_pBeam;
+CBeam *m_pBeam228;
 	Vector m_vecBeamStart, m_vecBeamEnd;
 };
 
@@ -87,13 +90,8 @@ void CShock::Spawn(void)
 
 	// Make beam NULL to avoid assertions.
 	
-	m_pBeam228 = CBeam::BeamCreate( "sprites/flare3.spr", width );
-	m_pBeam228->SetRenderMode( kRenderTransAdd );
-	m_pBeam228->SetRenderColor( Vector( 255, 255, 255 ) );
-	m_pBeam228->SetRenderAmount( 255 );
-	m_pBeam228->SetRenderFX( kRenderFxDistort );
+	m_pBeam228 = CBeam::BeamCreate( "sprites/flare3.spr", 10 );
 
-	m_pBeam228->SetScale( 0.35 );
 
 	Vector vDir = pev->velocity.Normalize();
 	ComputeBeamPositions(vDir, &m_vecBeamStart, &m_vecBeamEnd);
@@ -108,7 +106,10 @@ void CShock::Spawn(void)
 void CShock::ShockThink(void)
 {
 	pev->nextthink  = gpGlobals->time + 0.01f;
-
+	if( m_pBeam228->pev->waterlevel == 3 )
+	{
+		RadiusDamage( pev->origin, pev, pev,100,150, CLASS_NONE, DMG_ALWAYSGIB | DMG_BLAST );
+	}
 	Vector vDir		= pev->velocity.Normalize();
 	ComputeBeamPositions(vDir, &m_vecBeamStart, &m_vecBeamEnd);
 
@@ -131,10 +132,6 @@ void CShock::Shoot(entvars_t *pevOwner, Vector vecStart, Vector vecVelocity)
 
 void CShock::Touch(CBaseEntity *pOther)
 {
-	if( m_pPlayer->pev->waterlevel == 3 )
-	{
-		RadiusDamage( pev->origin, pev, pev,100,150, CLASS_NONE, DMG_ALWAYSGIB | DMG_BLAST );
-	}
 	// Do not collide with the owner.
 	if (ENT(pOther->pev) == pev->owner)
 		return;
@@ -180,7 +177,6 @@ void CShock::Touch(CBaseEntity *pOther)
 
 	MESSAGE_BEGIN( MSG_PVS, SVC_TEMPENTITY, pev->origin );
 	WRITE_BYTE( TE_DLIGHT );
-	WRITE_COORD_VECTOR( GetAbsOrigin() );
 	WRITE_BYTE( 8 );
 	WRITE_BYTE( 0 );
 	WRITE_BYTE( 253 );
