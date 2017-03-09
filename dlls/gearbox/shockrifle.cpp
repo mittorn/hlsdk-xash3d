@@ -63,8 +63,8 @@ void CShockrifle::Precache( void )
 	PRECACHE_SOUND("weapons/shock_discharge.wav");
 	m_iBeam = PRECACHE_MODEL( "sprites/lgtning.spr" );
 
-	m_usShockFire = PRECACHE_EVENT ( 1, "events/shockrifle.sc" );
-
+	m_usShockFire = PRECACHE_EVENT ( 1, "events/shock.sc" );
+//17-*667
 	UTIL_PrecacheOther("shock_beam");
 }
 
