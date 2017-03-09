@@ -182,7 +182,7 @@ void CShockBeam::ExplodeThink( void )
 		WRITE_COORD(pev->origin.x);	// X
 		WRITE_COORD(pev->origin.y);	// Y
 		WRITE_COORD(pev->origin.z);	// Z
-		WRITE_BYTE( 10 );		// radius * 0.1
+		WRITE_BYTE( 6 );		// radius * 0.1
 		WRITE_BYTE( 0 );		// r
 		WRITE_BYTE( 255 );		// g
 		WRITE_BYTE( 255 );		// b
