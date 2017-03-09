@@ -27,7 +27,7 @@ enum shockrifle_e {
 	SHOCK_IDLE3
 };
 
-class CShockRifle : public CBasePlayerWeapon
+class CShockrifle : public CBasePlayerWeapon
 {
 public:
 	void Spawn( void );
@@ -60,14 +60,14 @@ private:
 	unsigned short m_usShockFire;
 };
 
-LINK_ENTITY_TO_CLASS( weapon_shockrifle, CShockRifle );
+LINK_ENTITY_TO_CLASS( weapon_shockrifle, CShockrifle );
 
-BOOL CShockRifle::IsUseable( void )
+BOOL CShockrifle::IsUseable( void )
 {
 	return TRUE;
 }
 
-void CShockRifle::Spawn( )
+void CShockrifle::Spawn( )
 {
 	Precache( );
 	m_iId = WEAPON_SHOCKRIFLE;
@@ -83,7 +83,7 @@ void CShockRifle::Spawn( )
 }
 
 
-void CShockRifle::Precache( void )
+void CShockrifle::Precache( void )
 {
 	PRECACHE_MODEL("models/v_shock.mdl");
 	PRECACHE_MODEL("models/w_shock_rifle.mdl");
@@ -101,7 +101,7 @@ void CShockRifle::Precache( void )
 	UTIL_PrecacheOther("shock_beam");
 }
 
-int CShockRifle::GetItemInfo(ItemInfo *p)
+int CShockrifle::GetItemInfo(ItemInfo *p)
 {
 	p->pszName = STRING(pev->classname);
 	p->pszAmmo1 = "shock";
@@ -118,7 +118,7 @@ int CShockRifle::GetItemInfo(ItemInfo *p)
 	return 1;
 }
 
-int CShockRifle::AddToPlayer( CBasePlayer *pPlayer )
+int CShockrifle::AddToPlayer( CBasePlayer *pPlayer )
 {
 	if ( CBasePlayerWeapon::AddToPlayer( pPlayer ) )
 	{
@@ -140,12 +140,12 @@ int CShockRifle::AddToPlayer( CBasePlayer *pPlayer )
 }
 
 
-BOOL CShockRifle::Deploy( )
+BOOL CShockrifle::Deploy( )
 {
 	return DefaultDeploy( "models/v_shock.mdl", "models/p_shock.mdl", SHOCK_DRAW, "mp5" );
 }
 
-void CShockRifle::Holster( int skiplocal /* = 0 */ )
+void CShockrifle::Holster( int skiplocal /* = 0 */ )
 {
 	m_pPlayer->m_flNextAttack = UTIL_WeaponTimeBase() + 0.5;
 	SendWeaponAnim( SHOCK_HOLSTER );
@@ -157,7 +157,7 @@ void CShockRifle::Holster( int skiplocal /* = 0 */ )
 }
 
 
-void CShockRifle::PrimaryAttack()
+void CShockrifle::PrimaryAttack()
 {
 	Reload( );
 
@@ -231,7 +231,7 @@ void CShockRifle::PrimaryAttack()
 }
 
 
-void CShockRifle::Reload( void )
+void CShockrifle::Reload( void )
 {
 	if (m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType] >= SHOCK_MAX_CARRY)
 		return;
@@ -255,7 +255,7 @@ void CShockRifle::Reload( void )
 }
 
 
-void CShockRifle::WeaponIdle( void )
+void CShockrifle::WeaponIdle( void )
 {
 	Reload( );
 
