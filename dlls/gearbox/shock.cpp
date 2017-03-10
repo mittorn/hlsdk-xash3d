@@ -38,6 +38,7 @@ class CShockBeam : public CBaseEntity
 
 	int m_iFadeCount;
 	int m_iTrail;
+
 	Vector m_vecForward;
 
 	CBaseEntity *pShockedEnt;
@@ -100,6 +101,7 @@ void CShockBeam::Precache( )
 
 	PRECACHE_MODEL( "sprites/lgtning.spr" );
 	PRECACHE_MODEL( "sprites/glow02.spr" );
+ 	
 }
 
 int	CShockBeam :: Classify ( void )

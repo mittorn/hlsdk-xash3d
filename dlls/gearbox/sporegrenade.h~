@@ -50,8 +50,7 @@ public:
 	virtual void Killed(entvars_t *pevAttacker, int iGib);
 	static void SpawnTrailParticles(const Vector& origin, const Vector& direction, int modelindex, int count, float speed, float noise);
 	static void SpawnExplosionParticles(const Vector& origin, const Vector& direction, int modelindex, int count, float speed, float noise);
-int m_iExplode;
-int m_iExplodeC;
+
 	CSprite* m_pSporeGlow;
 	float m_flNextSpriteTrailSpawn;
 };
