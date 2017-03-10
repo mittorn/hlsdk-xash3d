@@ -1356,6 +1356,13 @@ public:
 	void Reload( void );
 	void WeaponIdle( void );
 
+	void ItemPostFrame(void);
+
+	int m_fShouldUpdateEffects;
+	int m_flBeamLifeTime;
+
+	void UpdateEffects();
+
 	virtual BOOL UseDecrement( void )
 	{ 
 #if defined( CLIENT_WEAPONS )

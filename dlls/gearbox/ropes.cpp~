@@ -176,7 +176,7 @@ void CRopeSample :: RopeTouch ( CBaseEntity *pOther )
 		GET_ATTACHMENT( ENT(pev), 0, vecEnd, NULL );
 		UTIL_TraceLine( vecSrc, vecEnd, ignore_monsters, ENT(pev), &tr1 );
 
-		pOther->pev->flags = PFLAG_LATCHING;
+		pOther->pev->flags = PFLAG_ON_ROPE;
 	}
 	else
 	{

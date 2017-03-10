@@ -45,7 +45,8 @@ void CShockrifle::Spawn( )
 
 	m_iDefaultAmmo = 10;
 	m_iFirePhase = 0;
-	
+	m_fShouldUpdateEffects = FALSE;
+	m_flBeamLifeTime = 0.0f;
 	FallInit();// get ready to fall down.
 }
 
@@ -64,7 +65,7 @@ void CShockrifle::Precache( void )
 	m_iBeam = PRECACHE_MODEL( "sprites/lgtning.spr" );
 
 	m_usShockFire = PRECACHE_EVENT ( 1, "events/shock.sc" );
-
+//17-*667
 	UTIL_PrecacheOther("shock_beam");
 }
 
@@ -158,6 +159,18 @@ void CShockrifle::PrimaryAttack()
 	flags = 0;
 
 	PLAYBACK_EVENT_FULL( flags, m_pPlayer->edict(), m_usShockFire, 0.0, (float *)&g_vecZero, (float *)&g_vecZero, 0.0, 0.0, 0, m_iBeam, 0, 0);	
+
+	if (!m_fShouldUpdateEffects)
+	{
+		// Toggle need to show effects.
+		m_fShouldUpdateEffects = TRUE;
+		m_flBeamLifeTime = gpGlobals->time + 1.0f;
+	}
+	else
+	{
+		UpdateEffects();
+		m_flBeamLifeTime = gpGlobals->time + 0.5f;
+	}
 
 	Vector anglesAim = m_pPlayer->pev->v_angle + m_pPlayer->pev->punchangle;
 	UTIL_MakeVectors( anglesAim );

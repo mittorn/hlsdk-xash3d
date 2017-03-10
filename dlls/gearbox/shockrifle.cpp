@@ -45,7 +45,8 @@ void CShockrifle::Spawn( )
 
 	m_iDefaultAmmo = 10;
 	m_iFirePhase = 0;
-	
+	m_fShouldUpdateEffects = FALSE;
+	m_flBeamLifeTime = 0.0f;
 	FallInit();// get ready to fall down.
 }
 
@@ -159,6 +160,18 @@ void CShockrifle::PrimaryAttack()
 
 	PLAYBACK_EVENT_FULL( flags, m_pPlayer->edict(), m_usShockFire, 0.0, (float *)&g_vecZero, (float *)&g_vecZero, 0.0, 0.0, 0, m_iBeam, 0, 0);	
 
+	if (!m_fShouldUpdateEffects)
+	{
+		// Toggle need to show effects.
+		m_fShouldUpdateEffects = TRUE;
+		m_flBeamLifeTime = gpGlobals->time + 1.0f;
+	}
+	else
+	{
+		UpdateEffects();
+		m_flBeamLifeTime = gpGlobals->time + 0.5f;
+	}
+
 	Vector anglesAim = m_pPlayer->pev->v_angle + m_pPlayer->pev->punchangle;
 	UTIL_MakeVectors( anglesAim );
 	anglesAim.x		= -anglesAim.x;
@@ -232,3 +245,38 @@ void CShockrifle::WeaponIdle( void )
 		SendWeaponAnim( SHOCK_IDLE1, 1 );
 	}
 }
+
+
+void CShockrifle::UpdateEffects()
+{
+	int flags;
+#if defined( CLIENT_WEAPONS )
+	flags = FEV_NOTHOST;
+#else
+	flags = 0;
+#endif
+
+	PLAYBACK_EVENT_FULL(flags,m_pPlayer->edict(),m_usShockFire,0.0,(float *)&g_vecZero,(float *)&g_vecZero,0.0,0.0,TRUE,0,0,0);
+}
+
+void CShockrifle::ItemPostFrame(void)
+{
+	CBasePlayerWeapon::ItemPostFrame();
+
+	if (!m_pPlayer->pev->button & IN_ATTACK)
+	{
+		if (m_fShouldUpdateEffects)
+		{
+			if (gpGlobals->time <= m_flBeamLifeTime)
+			{
+				UpdateEffects();
+			}
+			else
+			{
+				m_fShouldUpdateEffects = FALSE;
+				m_flBeamLifeTime = 0.0f;
+			}
+		}
+	}
+}
+
