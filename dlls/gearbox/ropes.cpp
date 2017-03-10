@@ -235,4 +235,4 @@ void CRopeSample :: CreateSample( void )
 	SetThink ( &CRopeSample::RopeThink );
 	pev->nextthink = gpGlobals->time + 0.1;
 }
-LINK_ENTITY_TO_CLASS( rope_sample, CRopeSample );
+LINK_ENTITY_TO_CLASS( rope_segment, CRopeSample );
