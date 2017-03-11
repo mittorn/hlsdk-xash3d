@@ -6,4 +6,5 @@
 *.a
 *.framework
 *.exe
+*~
 build/
