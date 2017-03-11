@@ -1379,7 +1379,7 @@ private:
 	int m_iBeam;// don't save me.
 	unsigned short m_usShockFire;
 };
-зх
+
 
 class CPipeWrench : public CBasePlayerWeapon
 {

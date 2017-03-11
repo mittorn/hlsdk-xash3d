@@ -17,7 +17,7 @@
 #include "player.h"
 #include "soundent.h"
 #include "gamerules.h"
-#include "sporegrenade.h"
+#include "sporegranade.h"
 
 //=========================================================
 // Opposing Forces Sporelauncher
