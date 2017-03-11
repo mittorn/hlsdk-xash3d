@@ -76,7 +76,7 @@ CPenguin g_Penguin;
 CPipeWrench g_PipeWrench;
 CShockrifle g_Shock;
 CSniperrifle g_Sniper;
-CSporeLauncher g_Spore;
+CSporelauncher g_Spore;
 
 /*
 ======================
