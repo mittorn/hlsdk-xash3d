@@ -1475,36 +1475,38 @@ public:
 private:
 	unsigned short m_usSniper;
 };
-
-class CSporeLauncher : public CBasePlayerWeapon
+class CSporelauncher : public CShotgun
 {
 public:
+
+#ifndef CLIENT_DLL
+	int		Save(CSave &save);
+	int		Restore(CRestore &restore);
+	static	TYPEDESCRIPTION m_SaveData[];
+#endif
+
 	void Spawn( void );
 	void Precache( void );
-	int iItemSlot( void ) { return 7; }
-	int GetItemInfo(ItemInfo *p);
+	int iItemSlot() { return 7; }
+	int GetItemInfo( ItemInfo *p );
 	int AddToPlayer( CBasePlayer *pPlayer );
+
 	void PrimaryAttack( void );
 	void SecondaryAttack( void );
-	BOOL IsUseable( void );
-	BOOL Deploy( void );
+	BOOL Deploy();
 	void Reload( void );
-	void Holster( int skiplocal = 0 );
 	void WeaponIdle( void );
 
 	virtual BOOL UseDecrement( void )
-	{ 
+	{
 #if defined( CLIENT_WEAPONS )
 		return TRUE;
 #else
 		return FALSE;
 #endif
 	}
-
+	int m_iSquidSpitSprite;
 private:
-	BOOL m_fPrimaryFire;
-	float m_flNextReload;
-	unsigned short m_usSporeLauncher;
-	unsigned short m_usSporeLauncherGrenade;
+	unsigned short m_usSporeFire;
 };
 #endif // WEAPONS_H
