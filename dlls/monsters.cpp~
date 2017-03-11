@@ -29,7 +29,6 @@
 #include "saverestore.h"
 #include "weapons.h"
 #include "scripted.h"
-#include "rcallymonster.h"
 #include "squadmonster.h"
 #include "decals.h"
 #include "soundent.h"

@@ -1499,6 +1499,7 @@ void CMedic :: Shoot ( void )
 
 	pev->effects |= EF_MUZZLEFLASH;
 
+	WeaponFlash ( vecShootOrigin );
 
 	m_cAmmoLoaded--;// take away a bullet!
 
