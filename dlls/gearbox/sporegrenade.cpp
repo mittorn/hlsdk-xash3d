@@ -42,6 +42,8 @@ void CSporeGrenade::Precache(void)
 	PRECACHE_MODEL("sprites/glow02.spr");
 	m_iExplode = PRECACHE_MODEL ("sprites/spore_exp_01.spr");
 	m_iExplodeC = PRECACHE_MODEL ("sprites/spore_exp_c_01.spr");
+	ALERT( at_console, "Explode sprite: %d\n", m_iExplode );
+	ALERT( at_console, "Explode sprite: %d\n", m_iExplodeC );
 }
 
 // UNDONE: temporary scorching for PreAlpha - find a less sleazy permenant solution.
@@ -66,8 +68,6 @@ void CSporeGrenade::Explode(TraceResult *pTrace, int bitsDamageType)
 			WRITE_BYTE( 25  ); // scale * 10
 			WRITE_BYTE( 155  ); // framerate
 		MESSAGE_END();
-	ALERT( at_console, "Explode sprite: %d\n", m_iExplode );
-	ALERT( at_console, "Explode sprite: %d\n", m_iExplodeC );
 
 	//float		flRndSound;// sound randomizer
 
