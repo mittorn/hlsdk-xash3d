@@ -131,6 +131,16 @@ void CSporeGrenade::DetonateUse(CBaseEntity *pActivator, CBaseEntity *pCaller, U
 	pev->nextthink = gpGlobals->time;
 }
 
+void CSporeGrenade::Glow( void )
+{
+	m_pSprite = CSprite::SpriteCreate( "sprites/glow02.spr", pev->origin, FALSE );
+	m_pSprite->SetAttachment( edict(), 0 );
+	m_pSprite->pev->scale = 0.75;
+	m_pSprite->SetTransparency( kRenderTransAdd, 150, 158, 19, 155, kRenderFxNoDissipation );
+	m_pSprite->pev->spawnflags |= SF_SPRITE_TEMPORARY;
+	m_pSprite->pev->flags |= FL_SKIPLOCALHOST;
+}
+
 void CSporeGrenade::PreDetonate(void)
 {
 	CSoundEnt::InsertSound(bits_SOUND_DANGER, pev->origin, 400, 0.3);
@@ -166,6 +176,7 @@ void CSporeGrenade::TumbleThink(void)
 	if (!IsInWorld())
 	{
 		UTIL_Remove(this);
+	UTIL_Remove( m_pSprite );
 		return;
 	}
 
@@ -367,15 +378,7 @@ void CSporeGrenade::Spawn(void)
 	m_fRegisteredSound = FALSE;
 
 	m_flNextSpriteTrailSpawn = gpGlobals->time;
-
-	m_pSporeGlow = CSprite::SpriteCreate("sprites/glow02.spr", pev->origin, FALSE);
-
-	if (m_pSporeGlow)
-	{
-		m_pSporeGlow->SetTransparency(kRenderGlow, 217, 241, 152, 200, kRenderFxNoDissipation);
-		m_pSporeGlow->SetAttachment(edict(), 1);
-		m_pSporeGlow->SetScale(.5f);
-	}
+Glow();
 }
 
 CGrenade * CSporeGrenade::ShootTimed(entvars_t *pevOwner, Vector vecStart, Vector vecVelocity, float time)

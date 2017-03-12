@@ -28,6 +28,7 @@ public:
 
 	void Precache(void);
 	void Spawn(void);
+void Glow(void);
 
 	static CGrenade *ShootTimed(entvars_t *pevOwner, Vector vecStart, Vector vecVelocity, float time);
 	static CGrenade *ShootContact(entvars_t *pevOwner, Vector vecStart, Vector vecVelocity);
@@ -53,8 +54,9 @@ public:
 
 	CSprite* m_pSporeGlow;
 	float m_flNextSpriteTrailSpawn;
-	float m_iExplode;
-	float m_iExplodeC;
+float m_iExplode;
+float m_iExplodeC;
+	CSprite *m_pSprite;
 };
 
 #endif // SPORE_GRENADE_H
