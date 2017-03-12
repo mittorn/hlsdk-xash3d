@@ -64,7 +64,7 @@ void CSporeGrenade::Explode(TraceResult *pTrace, int bitsDamageType)
 					break;
 			}
 			WRITE_BYTE( 25  ); // scale * 10
-			WRITE_BYTE( 75  ); // framerate
+			WRITE_BYTE( 128  ); // framerate
 		MESSAGE_END();
 
 	//float		flRndSound;// sound randomizer
@@ -121,13 +121,13 @@ void CSporeGrenade::Explode(TraceResult *pTrace, int bitsDamageType)
 	pev->effects |= EF_NODRAW;
 	SetThink(&CSporeGrenade::Smoke);
 	pev->velocity = g_vecZero;
-	pev->nextthink = gpGlobals->time + 0.3;
-
+	pev->nextthink = gpGlobals->time + 0.4;
 if(m_pSprite)
 {
 	UTIL_Remove( m_pSprite );
 	m_pSprite = NULL;
 }
+UTIL_Remove( this );
 }
 
 void CSporeGrenade::Smoke(void)
@@ -193,12 +193,6 @@ void CSporeGrenade::BounceSound(void)
 
 void CSporeGrenade::TumbleThink(void)
 {
-	if (!IsInWorld())
-	{
-		UTIL_Remove(this);
-		return;
-	}
-
 	StudioFrameAdvance();
 	pev->nextthink = gpGlobals->time + 0.1;
 
@@ -247,12 +241,6 @@ void CSporeGrenade::ExplodeTouch(CBaseEntity *pOther)
 
 void CSporeGrenade::DangerSoundThink(void)
 {
-	if (!IsInWorld())
-	{
-		UTIL_Remove(this);
-		return;
-	}
-
 	CSoundEnt::InsertSound(bits_SOUND_DANGER, pev->origin + pev->velocity * 0.5, pev->velocity.Length(), 0.2);
 	pev->nextthink = gpGlobals->time + 0.2;
 
