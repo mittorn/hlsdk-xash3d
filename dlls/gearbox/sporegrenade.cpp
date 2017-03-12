@@ -64,7 +64,7 @@ void CSporeGrenade::Explode(TraceResult *pTrace, int bitsDamageType)
 					break;
 			}
 			WRITE_BYTE( 25  ); // scale * 10
-			WRITE_BYTE( 155  ); // framerate
+			WRITE_BYTE( 75  ); // framerate
 		MESSAGE_END();
 
 	//float		flRndSound;// sound randomizer
