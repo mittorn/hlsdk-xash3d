@@ -47,6 +47,28 @@ void CSporeGrenade::Precache(void)
 // UNDONE: temporary scorching for PreAlpha - find a less sleazy permenant solution.
 void CSporeGrenade::Explode(TraceResult *pTrace, int bitsDamageType)
 {
+		MESSAGE_BEGIN( MSG_PAS, SVC_TEMPENTITY, pev->origin );
+			WRITE_BYTE( TE_EXPLOSION );		// This makes a dynamic light and the explosion sprites/sound
+			WRITE_COORD( pev->origin.x );	// Send to PAS because of the sound
+			WRITE_COORD( pev->origin.y );
+			WRITE_COORD( pev->origin.z );
+			switch ( RANDOM_LONG( 0, 1 ) )
+			{
+				case 0:	
+					WRITE_SHORT( m_iExplode );
+					break;
+
+				default:
+				case 1:
+					WRITE_SHORT( m_iExplodeC );
+					break;
+			}
+			WRITE_BYTE( 25  ); // scale * 10
+			WRITE_BYTE( 155  ); // framerate
+		MESSAGE_END();
+	ALERT( at_console, "Explode sprite: %d\n", m_iExplode );
+	ALERT( at_console, "Explode sprite: %d\n", m_iExplodeC );
+
 	//float		flRndSound;// sound randomizer
 
 	pev->model = iStringNull;//invisible
@@ -219,29 +241,6 @@ void CSporeGrenade::ExplodeTouch(CBaseEntity *pOther)
 
 	vecSpot = pev->origin - pev->velocity.Normalize() * 32;
 	UTIL_TraceLine(vecSpot, vecSpot + pev->velocity.Normalize() * 64, ignore_monsters, ENT(pev), &tr);
-
-		MESSAGE_BEGIN( MSG_PAS, SVC_TEMPENTITY, pev->origin );
-			WRITE_BYTE( TE_EXPLOSION );		// This makes a dynamic light and the explosion sprites/sound
-			WRITE_COORD( pev->origin.x );	// Send to PAS because of the sound
-			WRITE_COORD( pev->origin.y );
-			WRITE_COORD( pev->origin.z );
-			switch ( RANDOM_LONG( 0, 1 ) )
-			{
-				case 0:	
-					WRITE_SHORT( m_iExplode );
-					break;
-
-				default:
-				case 1:
-					WRITE_SHORT( m_iExplodeC );
-					break;
-			}
-			WRITE_BYTE( 25  ); // scale * 10
-			WRITE_BYTE( 155  ); // framerate
-		MESSAGE_END();
-	ALERT( at_console, "Explode sprite: %d\n", m_iExplode );
-	ALERT( at_console, "Explode sprite: %d\n", m_iExplodeC );
-
 
 	Explode(&tr, DMG_BLAST);
 }
