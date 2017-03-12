@@ -42,8 +42,6 @@ void CSporeGrenade::Precache(void)
 	PRECACHE_MODEL("sprites/glow02.spr");
 	m_iExplode = PRECACHE_MODEL ("sprites/spore_exp_01.spr");
 	m_iExplodeC = PRECACHE_MODEL ("sprites/spore_exp_c_01.spr");
-	ALERT( at_console, "Explode sprite: %d\n", m_iExplode );
-	ALERT( at_console, "Explode sprite: %d\n", m_iExplodeC );
 }
 
 // UNDONE: temporary scorching for PreAlpha - find a less sleazy permenant solution.
@@ -362,6 +360,7 @@ void CSporeGrenade::SlideTouch(CBaseEntity *pOther)
 
 void CSporeGrenade::Spawn(void)
 {
+Precache();
 	pev->movetype = MOVETYPE_BOUNCE;
 	
 	pev->solid = SOLID_BBOX;
