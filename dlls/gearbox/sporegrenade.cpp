@@ -211,7 +211,7 @@ void CSporeGrenade::ExplodeTouch(CBaseEntity *pOther)
 	UTIL_TraceLine(vecSpot, vecSpot + pev->velocity.Normalize() * 64, ignore_monsters, ENT(pev), &tr);
 
 		MESSAGE_BEGIN( MSG_PAS, SVC_TEMPENTITY, pev->origin );
-			WRITE_BYTE( TE_SPRITE );		// This makes a dynamic light and the explosion sprites/sound
+			WRITE_BYTE( TE_EXPLOSION );		// This makes a dynamic light and the explosion sprites/sound
 			WRITE_COORD( pev->origin.x );	// Send to PAS because of the sound
 			WRITE_COORD( pev->origin.y );
 			WRITE_COORD( pev->origin.z );
@@ -229,6 +229,8 @@ void CSporeGrenade::ExplodeTouch(CBaseEntity *pOther)
 			WRITE_BYTE( 25  ); // scale * 10
 			WRITE_BYTE( 155  ); // framerate
 		MESSAGE_END();
+	ALERT( at_console, "Explode sprite: %d\n", m_iExplode );
+	ALERT( at_console, "Explode sprite: %d\n", m_iExplodeC );
 
 
 	Explode(&tr, DMG_BLAST);
