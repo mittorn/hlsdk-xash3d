@@ -146,6 +146,7 @@ LOCAL_SRC_FILES := agrunt.cpp airtank.cpp \
 	   gearbox/generic_items.cpp \
 	   gearbox/geneworm.cpp \
 	   gearbox/gonome.cpp \
+                  gearbox/disball.cpp \
 	   gearbox/grapple_tonguetip.cpp \
 	   gearbox/grapple.cpp \
 	   gearbox/houndeye_dead.cpp \
