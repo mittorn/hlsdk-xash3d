@@ -103,11 +103,11 @@ void CSporeGrenade::Explode(TraceResult *pTrace, int bitsDamageType)
 	pev->velocity = g_vecZero;
 	pev->nextthink = gpGlobals->time + 0.3;
 
-	if (m_pSporeGlow)
-	{
-		UTIL_Remove(m_pSporeGlow);
-		m_pSporeGlow = NULL;
-	}
+if(m_pSprite)
+{
+	UTIL_Remove( m_pSprite );
+	m_pSprite = NULL;
+}
 }
 
 void CSporeGrenade::Smoke(void)
@@ -176,7 +176,6 @@ void CSporeGrenade::TumbleThink(void)
 	if (!IsInWorld())
 	{
 		UTIL_Remove(this);
-	UTIL_Remove( m_pSprite );
 		return;
 	}
 
