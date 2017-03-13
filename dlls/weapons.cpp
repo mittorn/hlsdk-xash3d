@@ -1666,13 +1666,6 @@ TYPEDESCRIPTION	CPipeWrench::m_SaveData[] =
 };
 IMPLEMENT_SAVERESTORE( CPipeWrench, CBasePlayerWeapon )
 
-TYPEDESCRIPTION	CSniperrifle::m_SaveData[] =
-{
-	DEFINE_FIELD( CSniperrifle, m_fNeedAjustBolt, FIELD_BOOLEAN ),
-	DEFINE_FIELD( CSniperrifle, m_iBoltState, FIELD_INTEGER ),
-};
-IMPLEMENT_SAVERESTORE( CSniperrifle, CBasePlayerWeapon )
-
 TYPEDESCRIPTION	CSporelauncher::m_SaveData[] =
 {
 	DEFINE_FIELD( CSporelauncher, m_iSquidSpitSprite, FIELD_INTEGER ),
