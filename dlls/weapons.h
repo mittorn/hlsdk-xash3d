@@ -1046,21 +1046,30 @@ private:
 class CDisplacer : public CBasePlayerWeapon
 {
 public:
-	void Spawn( void );
-	void Precache( void );
-	int iItemSlot( void ) { return 6; }
-	int GetItemInfo(ItemInfo *p);
-	int AddToPlayer( CBasePlayer *pPlayer );
-	void PrimaryAttack( void );
-	void SecondaryAttack( void );
-	BOOL Deploy( void );
-	void Holster( int skiplocal = 0 );
-	void WeaponIdle( void );
 
-	void EXPORT FireThink( void );
-	void EXPORT AltFireThink( void );
-	virtual BOOL UseDecrement( void )
-	{ 
+#ifndef CLIENT_DLL
+	int		Save(CSave &save);
+	int		Restore(CRestore &restore);
+	static	TYPEDESCRIPTION m_SaveData[];
+#endif
+	void Spawn(void);
+	void Precache(void);
+	int iItemSlot(void) { return 5; }
+	int GetItemInfo(ItemInfo *p);
+	int AddToPlayer(CBasePlayer *pPlayer);
+	void PrimaryAttack(void);
+	void SecondaryAttack(void);
+	BOOL Deploy(void);
+	void Holster(int skiplocal = 0);
+	void WeaponIdle(void); 
+
+	void ItemPreFrame(void);
+	void ItemPostFrame( void );
+
+	BOOL PlayEmptySound(void);
+
+	virtual BOOL UseDecrement(void)
+	{
 #if defined( CLIENT_WEAPONS )
 		return TRUE;
 #else
@@ -1068,13 +1077,33 @@ public:
 #endif
 	}
 
-private:
+	int		m_iFireState;
+	int		m_iFireMode;
+	CBaseEntity* m_hTargetEarth;
+	CBaseEntity* m_hTargetXen;
 
-    int m_iWorld;
-	int m_iBeam;
-	int m_iSecondaryMode;
+	BOOL HasAmmo(void);
+	void UseAmmo(int count);
+	BOOL CanFireDisplacer() const;
+
+	enum DISPLACER_FIRESTATE { FIRESTATE_NONE = 0, FIRESTATE_SPINUP, FIRESTATE_SPIN, FIRESTATE_FIRE };
+	enum DISPLACER_FIREMODE { FIREMODE_NONE = 0, FIREMODE_FORWARD, FIREMODE_BACKWARD };
+	enum DISPLACER_EFFECT { EFFECT_NONE = 0, EFFECT_CORE };
+
+private:
+	void ClearSpin( void );
+	void SpinUp(int iFireMode);
+	void Spin( void );
+	void Fire( BOOL fIsPrimary );
+	void Teleport( void );
+	void Displace( void );
+	void UpdateEffects( void );
+	BOOL ShouldUpdateEffects( void ) const;
+
+private:
 	unsigned short m_usDisplacer;
 };
+
 class CEagle : public CBasePlayerWeapon
 {
 public:
@@ -1401,36 +1430,26 @@ private:
 	float m_flHoldStartTime;
 };
 
-
 class CSniperrifle : public CBasePlayerWeapon
 {
 public:
-
-#ifndef CLIENT_DLL
-	int		Save(CSave &save);
-	int		Restore(CRestore &restore);
-	static	TYPEDESCRIPTION m_SaveData[];
-#endif
-
-	void Spawn(void);
-	void Precache(void);
-	int iItemSlot(void) { return 6; }
+	void Spawn( void );
+	void Precache( void );
+	int iItemSlot( void ) { return 6; }
 	int GetItemInfo(ItemInfo *p);
-	int AddToPlayer(CBasePlayer *pPlayer);
-	void PrimaryAttack(void);
-	void SecondaryAttack(void);
-	BOOL Deploy(void);
-	void Holster(int skiplocal = 0);
-	void Reload(void);
-	void WeaponIdle(void);
-	void ItemPostFrame(void);
-
-	BOOL ShouldWeaponIdle(void) { return TRUE; };
+	int AddToPlayer( CBasePlayer *pPlayer );
+	void PrimaryAttack( void );
+	void SecondaryAttack( void );
+	BOOL Deploy( void );
+	void Holster( int skiplocal = 0 );
+	void Reload( void );
+	void WeaponIdle( void );
+	float m_flSoundDelay;
 
 	BOOL m_fInZoom;// don't save this. 
 
-	virtual BOOL UseDecrement(void)
-	{
+	virtual BOOL UseDecrement( void )
+	{ 
 #if defined( CLIENT_WEAPONS )
 		return TRUE;
 #else
@@ -1438,13 +1457,8 @@ public:
 #endif
 	}
 
-	BOOL m_fNeedAjustBolt;
-	int	 m_iBoltState;
-
-	enum SNIPER_BOLTSTATE { BOLTSTATE_FINE = 0, BOLTSTATE_ADJUST, BOLTSTATE_ADJUSTING, };
-
 private:
-	unsigned short m_usSniper;
+	unsigned short m_usM40a1;
 };
 class CSporelauncher : public CShotgun
 {

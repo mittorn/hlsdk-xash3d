@@ -1625,6 +1625,15 @@ TYPEDESCRIPTION	CSatchel::m_SaveData[] =
 
 IMPLEMENT_SAVERESTORE( CSatchel, CBasePlayerWeapon )
 
+TYPEDESCRIPTION	CDisplacer::m_SaveData[] =
+{
+	DEFINE_FIELD( CDisplacer, m_iFireState, FIELD_INTEGER ),
+	DEFINE_FIELD( CDisplacer, m_iFireMode, FIELD_INTEGER ),
+	DEFINE_FIELD( CDisplacer, m_hTargetEarth, FIELD_CLASSPTR ),
+	DEFINE_FIELD( CDisplacer, m_hTargetXen, FIELD_CLASSPTR ),
+};
+IMPLEMENT_SAVERESTORE( CDisplacer, CBasePlayerWeapon )
+
 TYPEDESCRIPTION	CEagle::m_SaveData[] =
 {
 	DEFINE_FIELD( CEagle, m_fSpotActive, FIELD_INTEGER ),
@@ -1656,13 +1665,6 @@ TYPEDESCRIPTION	CPipeWrench::m_SaveData[] =
 	DEFINE_FIELD( CPipeWrench, m_flHoldStartTime, FIELD_TIME ),
 };
 IMPLEMENT_SAVERESTORE( CPipeWrench, CBasePlayerWeapon )
-
-TYPEDESCRIPTION	CSniperrifle::m_SaveData[] =
-{
-	DEFINE_FIELD( CSniperrifle, m_fNeedAjustBolt, FIELD_BOOLEAN ),
-	DEFINE_FIELD( CSniperrifle, m_iBoltState, FIELD_INTEGER ),
-};
-IMPLEMENT_SAVERESTORE( CSniperrifle, CBasePlayerWeapon )
 
 TYPEDESCRIPTION	CSporelauncher::m_SaveData[] =
 {
