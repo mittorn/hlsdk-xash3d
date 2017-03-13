@@ -309,34 +309,37 @@ void CDisplacer::Spawn()
 	m_iFireMode = FIREMODE_NONE;
 
 #ifndef CLIENT_DLL
-	edict_t* pEnt = NULL;
-	pEnt = FIND_ENTITY_BY_CLASSNAME(pEnt, "info_displacer_earth_target");
+	if( !g_pGameRules->IsMultiplayer() || g_pGameRules->IsCoOp() )
+	{
+		edict_t* pEnt = NULL;
+		pEnt = FIND_ENTITY_BY_CLASSNAME(pEnt, "info_displacer_earth_target");
 
-	if (pEnt)
-	{
-		m_hTargetEarth = GetClassPtr((CBaseEntity *)VARS(pEnt));
-	}
-	else
-	{
-		ALERT(
-			at_console,
-			"ERROR: Couldn't find entity with classname %s\n",
-			"info_displacer_earth_target");
-	}
+		if( pEnt )
+		{
+			m_hTargetEarth = GetClassPtr((CBaseEntity *)VARS(pEnt));
+		}
+		else
+		{
+			ALERT(
+				at_console,
+				"ERROR: Couldn't find entity with classname %s\n",
+				"info_displacer_earth_target");
+		}
 
-	pEnt = NULL;
-	pEnt = FIND_ENTITY_BY_CLASSNAME(pEnt, "info_displacer_xen_target");
+		pEnt = NULL;
+		pEnt = FIND_ENTITY_BY_CLASSNAME(pEnt, "info_displacer_xen_target");
 
-	if (pEnt)
-	{
-		m_hTargetXen = GetClassPtr((CBaseEntity *)VARS(pEnt));
-	}
-	else
-	{
-		ALERT(
-			at_console,
-			"ERROR: Couldn't find entity with classname %s\n",
-			"info_displacer_xen_target");
+		if( pEnt )
+		{
+			m_hTargetXen = GetClassPtr((CBaseEntity *)VARS(pEnt));
+		}
+		else
+		{
+			ALERT(
+				at_console,
+				"ERROR: Couldn't find entity with classname %s\n",
+				"info_displacer_xen_target");
+		}
 	}
 #endif
 
@@ -700,9 +703,18 @@ void CDisplacer::Teleport( void )
 {
 	ASSERT(m_hTargetEarth != NULL && m_hTargetXen);
 
-	CBaseEntity* pTarget = (!m_pPlayer->m_fInXen)
-		? m_hTargetXen
-		: m_hTargetEarth;
+	CBaseEntity *pTarget = NULL;
+
+	if( g_pGameRules->IsMultiplayer() && !g_pGameRules->IsCoOp() )
+	{
+		// Randomize the destination in multiplayer
+		for( int i = RANDOM_LONG( 1, 5 ); i > 0; i-- )
+		{
+			pTarget = UTIL_FindEntityByClassname( pTarget, "info_player_deathmatch" );
+		}
+	}
+	else
+		pTarget = (!m_pPlayer->m_fInXen) ? m_hTargetXen : m_hTargetEarth;
 
 	Vector tmp = pTarget->pev->origin;
 
