@@ -120,7 +120,13 @@ void CPortal::Shoot(entvars_t *pevOwner, Vector vecStart, Vector vecVelocity)
 
 void CPortal::Touch(CBaseEntity *pOther)
 {
-	if (!pOther->pev->takedamage)
+	TraceResult tr;
+	Vector vecSpot;
+	Vector vecSrc;
+	edict_t *pEnt = NULL;
+	pev->enemy = pOther->edict();
+	CBaseEntity *pTarget = NULL;
+/*	if (!pOther->pev->takedamage)
 	{
 		EMIT_SOUND_DYN(ENT(pev), CHAN_WEAPON, "weapons/displacer_impact.wav", 1, ATTN_NORM, 0, 100);
 	}
@@ -141,7 +147,66 @@ void CPortal::Touch(CBaseEntity *pOther)
 			UTIL_Remove(pOther);
 		}
 	}
+*/
 
+	if( g_pGameRules->IsMultiplayer() && !g_pGameRules->IsCoOp() )
+	{
+		if( pOther->IsPlayer() )
+		{
+			for( int i = RANDOM_LONG(1,5); i > 0; i-- )
+				pEnt = FIND_ENTITY_BY_CLASSNAME(pEnt, "info_player_deathmatch");
+			if( pEnt )
+				pTarget = GetClassPtr((CBaseEntity *)VARS(pEnt));
+
+			if (pTarget)
+			{
+				//UTIL_ScreenFade( pOther, Vector(0, 160, 0), 0.5, 0.5, 255, FFADE_IN );
+
+				Vector tmp = pTarget->pev->origin;
+				tmp.z -= pOther->pev->mins.z;
+				tmp.z++;
+				UTIL_SetOrigin( pOther->pev, tmp );
+
+				pOther->pev->angles = pTarget->pev->angles;
+				pOther->pev->velocity = pOther->pev->basevelocity = g_vecZero;
+
+				CSprite *pSpr = CSprite::SpriteCreate( "sprites/xflare1.spr", vecSrc, TRUE );
+				pSpr->AnimateAndDie( 6 );
+				pSpr->SetTransparency(kRenderGlow, 184, 250, 214, 255, kRenderFxNoDissipation);
+
+				EMIT_SOUND(ENT(pOther->pev), CHAN_WEAPON, "weapons/displacer_teleport_player.wav", 1, ATTN_NORM);
+					
+				vecSrc = pTarget->pev->origin;
+				MESSAGE_BEGIN( MSG_PVS, SVC_TEMPENTITY, vecSrc );
+					WRITE_BYTE(TE_DLIGHT);
+					WRITE_COORD( vecSrc.x );	// X
+					WRITE_COORD( vecSrc.y );	// Y
+					WRITE_COORD( vecSrc.z );	// Z
+					WRITE_BYTE( 24 );		// radius * 0.1
+					WRITE_BYTE( 255 );		// r
+					WRITE_BYTE( 180 );		// g
+					WRITE_BYTE( 96 );		// b
+					WRITE_BYTE( 20 );		// time * 10
+					WRITE_BYTE( 0 );		// decay * 0.1
+				MESSAGE_END( );
+			}
+		}
+	}
+	else if ( pOther->pev->flags & FL_MONSTER )
+	{
+		if ( pOther->pev->health <= 200 && !FClassnameIs( pOther->pev, "monster_nihilanth" )
+			&& !FClassnameIs( pOther->pev, "monster_apache" ) && !FClassnameIs( pOther->pev, "monster_osprey" )
+			&& !FClassnameIs( pOther->pev, "monster_superapache" ) && !FClassnameIs( pOther->pev, "monster_gargantua" )
+			&& !FClassnameIs( pOther->pev, "monster_bigmomma" ))
+		{
+			pOther->Killed( pev, GIB_NEVER );
+			UTIL_Remove( pOther );
+		}
+		else
+		{
+			pOther->TakeDamage( pev, pev, 100, DMG_ENERGYBEAM | DMG_NEVERGIB );
+		}
+	}
 
 	// portal circle
 	MESSAGE_BEGIN(MSG_PVS, SVC_TEMPENTITY, pev->origin);
@@ -151,7 +216,7 @@ void CPortal::Touch(CBaseEntity *pOther)
 		WRITE_COORD(pev->origin.z);
 		WRITE_COORD(pev->origin.x);
 		WRITE_COORD(pev->origin.y);
-		WRITE_COORD(pev->origin.z + 2000); // reach damage radius over .2 seconds
+		WRITE_COORD(pev->origin.z + 300); // reach damage radius over .2 seconds
 		WRITE_SHORT(iRingSprite);
 		WRITE_BYTE(0); // startframe
 		WRITE_BYTE(0); // framerate
@@ -702,16 +767,17 @@ void CDisplacer::Displace( void )
 void CDisplacer::Teleport( void )
 {
 	ASSERT(m_hTargetEarth != NULL && m_hTargetXen);
-
+#ifndef CLIENT_DLL
+	edict_t *pEnt = NULL;
 	CBaseEntity *pTarget = NULL;
 
 	if( g_pGameRules->IsMultiplayer() && !g_pGameRules->IsCoOp() )
 	{
 		// Randomize the destination in multiplayer
 		for( int i = RANDOM_LONG( 1, 5 ); i > 0; i-- )
-		{
-			pTarget = UTIL_FindEntityByClassname( pTarget, "info_player_deathmatch" );
-		}
+			pEnt = FIND_ENTITY_BY_CLASSNAME(pEnt, "info_player_deathmatch");
+		if( pEnt )
+			pTarget = GetClassPtr((CBaseEntity *)VARS(pEnt));
 	}
 	else
 		pTarget = (!m_pPlayer->m_fInXen) ? m_hTargetXen : m_hTargetEarth;
@@ -743,7 +809,7 @@ void CDisplacer::Teleport( void )
 	{
 		m_pPlayer->pev->gravity = 1.0;
 	}
-
+#endif
 	int flags;
 #if defined( CLIENT_WEAPONS )
 	flags = FEV_NOTHOST;
