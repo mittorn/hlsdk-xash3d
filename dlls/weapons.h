@@ -1104,34 +1104,47 @@ private:
 	unsigned short m_usDisplacer;
 };
 
+class CEagleLaser : public CBaseEntity
+{
+	void Spawn( void );
+	void Precache( void );
+
+	int	ObjectCaps( void ) { return FCAP_DONT_SAVE; }
+
+public:
+	void Suspend( float flSuspendTime );
+	void EXPORT Revive( void );
+
+	static CEagleLaser *CreateSpotDeagle( void );
+};
+
 class CEagle : public CBasePlayerWeapon
 {
 public:
 
 #ifndef CLIENT_DLL
-	int		Save(CSave &save);
-	int		Restore(CRestore &restore);
+	int		Save( CSave &save );
+	int		Restore( CRestore &restore );
 	static	TYPEDESCRIPTION m_SaveData[];
 #endif
 
-	void Spawn(void);
-	void Precache(void);
-	int iItemSlot(void) { return 2; }
+	void Spawn( void );
+	void Precache( void );
+	int iItemSlot( void ) { return 2; }
 	int GetItemInfo(ItemInfo *p);
 
-	void PrimaryAttack(void);
-	void SecondaryAttack(void);
-	BOOL Deploy(void);
-	void Holster(int skiplocal = 0);
+	void PrimaryAttack( void );
+	void SecondaryAttack( void );
+	BOOL Deploy( void );
+	void Holster( int skiplocal = 0 );
+	void Reload( void );
+	void WeaponIdle( void );
 
-	void Reload(void);
-	void WeaponIdle(void);
-
-	void UpdateSpot(void);
-	BOOL ShouldWeaponIdle(void) { return TRUE; };
-
-	virtual BOOL UseDecrement(void)
-	{
+	void UpdateSpot( void );
+	CEagleLaser *m_pEagleLaser;
+	int m_fEagleLaserActive;
+	virtual BOOL UseDecrement( void )
+	{ 
 #if defined( CLIENT_WEAPONS )
 		return TRUE;
 #else
@@ -1139,14 +1152,13 @@ public:
 #endif
 	}
 
-	CLaserSpot *m_pSpot;
-	int m_fSpotActive;
-
 private:
 	int m_iShell;
+	
 
-	unsigned short m_usFireEagle;
+	unsigned short m_usEagle;
 };
+
 
 class CGrappleTonguetip;
 
