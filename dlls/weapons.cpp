@@ -1625,6 +1625,15 @@ TYPEDESCRIPTION	CSatchel::m_SaveData[] =
 
 IMPLEMENT_SAVERESTORE( CSatchel, CBasePlayerWeapon )
 
+TYPEDESCRIPTION	CDisplacer::m_SaveData[] =
+{
+	DEFINE_FIELD( CDisplacer, m_iFireState, FIELD_INTEGER ),
+	DEFINE_FIELD( CDisplacer, m_iFireMode, FIELD_INTEGER ),
+	DEFINE_FIELD( CDisplacer, m_hTargetEarth, FIELD_CLASSPTR ),
+	DEFINE_FIELD( CDisplacer, m_hTargetXen, FIELD_CLASSPTR ),
+};
+IMPLEMENT_SAVERESTORE( CDisplacer, CBasePlayerWeapon )
+
 TYPEDESCRIPTION	CEagle::m_SaveData[] =
 {
 	DEFINE_FIELD( CEagle, m_fSpotActive, FIELD_INTEGER ),
