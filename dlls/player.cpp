@@ -37,7 +37,9 @@
 #include "pm_shared.h"
 #include "hltv.h"
 #include "shall_map_fixes.h"
-
+#if defined(CLIENT_FOG)
+#include "fog.h"
+#endif // defined(CLIENT_FOG)
 // #define DUCKFIX
 
 extern DLL_GLOBAL ULONG g_ulModelIndexPlayer;
@@ -121,7 +123,9 @@ TYPEDESCRIPTION	CBasePlayer::m_playerSaveData[] =
 	DEFINE_FIELD( CBasePlayer, m_iFOV, FIELD_INTEGER ),
 
 	DEFINE_FIELD( CBasePlayer, m_bWasTouchingTriggerPushBeforeFinalBattle, FIELD_BOOLEAN ),
-
+#if defined ( CLIENT_FOG )
+	DEFINE_FIELD( CBasePlayer, m_fUpdateFog, FIELD_BOOLEAN ),
+#endif // defined ( CLIENT_FOG )
 	//DEFINE_FIELD( CBasePlayer, m_fDeadTime, FIELD_FLOAT ), // only used in multiplayer games
 	//DEFINE_FIELD( CBasePlayer, m_fGameHUDInitialized, FIELD_INTEGER ), // only used in multiplayer games
 	//DEFINE_FIELD( CBasePlayer, m_flStopExtraSoundTime, FIELD_TIME ),
@@ -237,6 +241,10 @@ void LinkUserMessages( void )
 
 	gmsgStatusText = REG_USER_MSG( "StatusText", -1 );
 	gmsgStatusValue = REG_USER_MSG( "StatusValue", 3 );
+
+#if defined(CLIENT_FOG)
+	ClientFog_RegisterMessage();
+#endif // defined(CLIENT_FOG)
 }
 
 LINK_ENTITY_TO_CLASS( player, CBasePlayer )
@@ -2928,6 +2936,10 @@ void CBasePlayer::Precache( void )
 
 	if( gInitHUD )
 		m_fInitHUD = TRUE;
+
+#if defined ( CLIENT_FOG )
+	TellClientToUpdateFog();
+#endif // defined ( CLIENT_FOG )
 }
 
 int CBasePlayer::Save( CSave &save )
@@ -4097,6 +4109,24 @@ void CBasePlayer::UpdateClientData( void )
 		UpdateStatusBar();
 		m_flNextSBarUpdateTime = gpGlobals->time + 0.2;
 	}
+
+#if defined(CLIENT_FOG)
+	if( ShouldUpdateFog() )
+	{
+		BOOL foundActiveFogEntity = FALSE;
+		CBaseEntity *fogEntity = NULL;
+		while( !foundActiveFogEntity && ( fogEntity = UTIL_FindEntityByClassname( fogEntity, FOG_ENTITY_CLASSNAME ) ) != NULL )
+		{
+			if( ClientFog_IsFogEntityActive( fogEntity ) )
+			{
+				foundActiveFogEntity = TRUE;
+				ClientFog_UpdateClientSide( fogEntity, this );
+			}
+		}
+
+		MarkFogAsUpdated();
+	}
+#endif // defined(CLIENT_FOG)
 
 	// Send the current bhopcap state.
 	if( !m_bSentBhopcap )

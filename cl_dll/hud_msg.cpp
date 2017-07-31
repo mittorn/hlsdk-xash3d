@@ -21,6 +21,10 @@
 #include "parsemsg.h"
 #include "r_efx.h"
 
+#if defined(CLIENT_FOG)
+#include "clientfog.h"
+#endif // defined(CLIENT_FOG)
+
 #define MAX_CLIENTS 32
 
 extern BEAM *pBeam;
@@ -69,6 +73,10 @@ void CHud::MsgFunc_InitHUD( const char *pszName, int iSize, void *pbuf )
 			pList->p->InitHUDData();
 		pList = pList->pNext;
 	}
+
+#if defined(CLIENT_FOG)
+	ClientFog_Initialize();
+#endif // defined(CLIENT_FOG)
 
 	//Probably not a good place to put this.
 	pBeam = pBeam2 = NULL;

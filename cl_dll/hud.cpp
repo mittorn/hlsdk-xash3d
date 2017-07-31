@@ -27,6 +27,9 @@
 
 #include "demo.h"
 #include "demo_api.h"
+#if defined(CLIENT_FOG)
+#include "clientfog.h"
+#endif // defined(CLIENT_FOG)
 
 cvar_t *hud_textmode;
 float g_hud_text_color[3];
@@ -77,6 +80,13 @@ int __MsgFunc_GameMode( const char *pszName, int iSize, void *pbuf )
 {
 	return gHUD.MsgFunc_GameMode( pszName, iSize, pbuf );
 }
+
+#if defined ( CLIENT_FOG )
+int __MsgFunc_ClientFog( const char *pszName, int iSize, void *pbuf )
+{
+	return ClientFog_ReceiveFromServer( pszName, iSize, pbuf );
+}
+#endif // defined ( CLIENT_FOG )
 
 // TFFree Command Menu
 void __CmdFunc_OpenCommandMenu( void )
@@ -182,6 +192,10 @@ void CHud::Init( void )
 
 	// VGUI Menus
 	HOOK_MESSAGE( VGUIMenu );
+
+#if defined(CLIENT_FOG)
+	HOOK_MESSAGE( ClientFog );
+#endif // defined(CLIENT_FOG)
 
 	CVAR_CREATE( "hud_classautokill", "1", FCVAR_ARCHIVE | FCVAR_USERINFO );		// controls whether or not to suicide immediately on TF class switch
 	CVAR_CREATE( "hud_takesshots", "0", FCVAR_ARCHIVE );		// controls whether or not to automatically take screenshots at the end of a round

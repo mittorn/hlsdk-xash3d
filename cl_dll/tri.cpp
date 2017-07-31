@@ -17,6 +17,10 @@
 #include "cl_entity.h"
 #include "triangleapi.h"
 
+#if defined(CLIENT_FOG)
+#include "clientfog.h"
+#endif // defined(CLIENT_FOG)
+
 extern "C"
 {
 	void DLLEXPORT HUD_DrawNormalTriangles( void );
@@ -112,6 +116,10 @@ Render any triangles with transparent rendermode needs here
 */
 void DLLEXPORT HUD_DrawTransparentTriangles( void )
 {
+#if defined(CLIENT_FOG)
+	ClientFog_Render();
+#endif // defined(CLIENT_FOG)
+
 #if defined( TEST_IT )
 //	Draw_Triangles();
 #endif
