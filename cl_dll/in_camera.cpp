@@ -466,7 +466,8 @@ void CAM_ToThirdPerson( void )
 		return;
 	}
 #endif
-	gEngfuncs.GetViewAngles( (float *)viewangles );
+	cl_entity_t *ent = gEngfuncs.GetEntityByIndex(g_LastChatPlayer);
+	VectorCopy( ent->angles, viewangles );
 
 	if( !cam_thirdperson )
 	{
@@ -642,7 +643,7 @@ void CAM_EndDistance( void )
 
 int DLLEXPORT CL_IsThirdPerson( void )
 {
-	return ( cam_thirdperson ? 1 : 0 ) || ( g_iUser1 && ( g_iUser2 == gEngfuncs.GetLocalPlayer()->index ) );
+	return true;//( cam_thirdperson ? 1 : 0 ) || ( g_iUser1 && ( g_iUser2 == gEngfuncs.GetLocalPlayer()->index ) );
 }
 
 void DLLEXPORT CL_CameraOffset( float *ofs )

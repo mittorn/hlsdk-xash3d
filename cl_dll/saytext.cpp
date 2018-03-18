@@ -146,6 +146,7 @@ int CHudSayText::Draw( float flTime )
 
 	return 1;
 }
+int g_LastChatPlayer;
 
 int CHudSayText::MsgFunc_SayText( const char *pszName, int iSize, void *pbuf )
 {
@@ -153,6 +154,8 @@ int CHudSayText::MsgFunc_SayText( const char *pszName, int iSize, void *pbuf )
 
 	int client_index = READ_BYTE();		// the client who spoke the message
 	SayTextPrint( READ_STRING(), iSize - 1,  client_index );
+	g_LastChatPlayer = client_index;
+	gEngfuncs.pfnClientCmd("wait;screenshot");
 
 	return 1;
 }

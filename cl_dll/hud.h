@@ -380,7 +380,7 @@ public:
 	float m_flShutoffTime;
 	int m_fWaitingForMore;
 };
-
+extern int g_LastChatPlayer;
 //
 //-----------------------------------------------------
 //

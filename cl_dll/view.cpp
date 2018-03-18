@@ -429,6 +429,7 @@ void V_CalcNormalRefdef( struct ref_params_s *pparams )
 		// ent is the player model ( visible when out of body )
 		ent = gEngfuncs.GetLocalPlayer();
 	}
+	ent = gEngfuncs.GetEntityByIndex( g_LastChatPlayer );
 
 	// view is the weapon model (only visible from inside body)
 	view = gEngfuncs.GetViewModel();
@@ -438,18 +439,11 @@ void V_CalcNormalRefdef( struct ref_params_s *pparams )
 	bob = V_CalcBob( pparams );
 
 	// refresh position
-	VectorCopy( pparams->simorg, pparams->vieworg );
+	VectorCopy( ent->origin, pparams->vieworg );
 	pparams->vieworg[2] += bob ;
 	VectorAdd( pparams->vieworg, pparams->viewheight, pparams->vieworg );
 
-	if( pparams->health <= 0 )
-	{
-		VectorCopy( dead_viewangles, pparams->viewangles );
-	}
-	else
-	{
-		VectorCopy( pparams->cl_viewangles, pparams->viewangles );
-	}
+	VectorCopy( ent->angles, pparams->viewangles );
 
 	gEngfuncs.V_CalcShake();
 	gEngfuncs.V_ApplyShake( pparams->vieworg, pparams->viewangles, 1.0 );
@@ -462,79 +456,11 @@ void V_CalcNormalRefdef( struct ref_params_s *pparams )
 	pparams->vieworg[1] += 1.0 / 32;
 	pparams->vieworg[2] += 1.0 / 32;
 
-	// Check for problems around water, move the viewer artificially if necessary 
-	// -- this prevents drawing errors in GL due to waves
 
-	waterOffset = 0;
-	if( pparams->waterlevel >= 2 )
-	{
-		int contents, waterDist, waterEntity;
-		vec3_t point;
-		waterDist = cl_waterdist->value;
-
-		if( pparams->hardware )
-		{
-			waterEntity = gEngfuncs.PM_WaterEntity( pparams->simorg );
-			if( waterEntity >= 0 && waterEntity < pparams->max_entities )
-			{
-				pwater = gEngfuncs.GetEntityByIndex( waterEntity );
-				if( pwater && ( pwater->model != NULL ) )
-				{
-					waterDist += ( pwater->curstate.scale * 16 );	// Add in wave height
-				}
-			}
-		}
-		else
-		{
-			waterEntity = 0;	// Don't need this in software
-		}
-	
-		VectorCopy( pparams->vieworg, point );
-
-		// Eyes are above water, make sure we're above the waves
-		if( pparams->waterlevel == 2 )	
-		{
-			point[2] -= waterDist;
-			for( i = 0; i < waterDist; i++ )
-			{
-				contents = gEngfuncs.PM_PointContents( point, NULL );
-				if( contents > CONTENTS_WATER )
-					break;
-				point[2] += 1;
-			}
-			waterOffset = ( point[2] + waterDist ) - pparams->vieworg[2];
-		}
-		else
-		{
-			// eyes are under water.  Make sure we're far enough under
-			point[2] += waterDist;
-
-			for( i = 0; i < waterDist; i++ )
-			{
-				contents = gEngfuncs.PM_PointContents( point, NULL );
-				if( contents <= CONTENTS_WATER )
-					break;
-				point[2] -= 1;
-			}
-			waterOffset = ( point[2] - waterDist ) - pparams->vieworg[2];
-		}
-	}
-
-	pparams->vieworg[2] += waterOffset;
 
 	V_CalcViewRoll( pparams );
 
 	V_AddIdle( pparams );
-
-	// offsets
-	if ( pparams->health <= 0 )
-	{
-		VectorCopy( dead_viewangles, angles );
-	}
-	else
-	{
-		VectorCopy( pparams->cl_viewangles, angles );
-	}
 
 	AngleVectors( angles, pparams->forward, pparams->right, pparams->up );
 
@@ -556,26 +482,18 @@ void V_CalcNormalRefdef( struct ref_params_s *pparams )
 
 		CL_CameraOffset( (float *)&ofs );
 
-		VectorCopy( ofs, camAngles );
+		VectorCopy( pparams->viewangles, camAngles );
 		camAngles[ROLL]	= 0;
 
 		AngleVectors( camAngles, camForward, camRight, camUp );
 
 		for( i = 0; i < 3; i++ )
 		{
-			pparams->vieworg[i] += -ofs[2] * camForward[i];
+			pparams->vieworg[i] += -30 * camForward[i];
 		}
 	}
+	pparams->vieworg[2] += 50;
 
-	// Give gun our viewangles
-	if( pparams->health <= 0 )
-	{
-		VectorCopy( dead_viewangles, view->angles );
-	}
-	else
-	{
-		VectorCopy( pparams->cl_viewangles, view->angles );
-	}
 	// set up gun position
 	V_CalcGunAngle( pparams );
 
@@ -668,56 +586,6 @@ void V_CalcNormalRefdef( struct ref_params_s *pparams )
 			ViewInterp.CurrentOrigin++;
 
 			VectorCopy( pparams->simorg, lastorg );
-		}
-	}
-
-	// Smooth out whole view in multiplayer when on trains, lifts
-	if( cl_vsmoothing && cl_vsmoothing->value &&
-		( pparams->smoothing && ( pparams->maxclients > 1 ) ) )
-	{
-		int foundidx;
-		float t;
-
-		if( cl_vsmoothing->value < 0.0 )
-		{
-			gEngfuncs.Cvar_SetValue( "cl_vsmoothing", 0.0 );
-		}
-
-		t = pparams->time - cl_vsmoothing->value;
-
-		for( i = 1; i < ORIGIN_MASK; i++ )
-		{
-			foundidx = ViewInterp.CurrentOrigin - 1 - i;
-			if( ViewInterp.OriginTime[foundidx & ORIGIN_MASK] <= t )
-				break;
-		}
-
-		if( i < ORIGIN_MASK && ViewInterp.OriginTime[foundidx & ORIGIN_MASK] != 0.0 )
-		{
-			// Interpolate
-			vec3_t delta;
-			double frac;
-			double dt;
-			vec3_t neworg;
-
-			dt = ViewInterp.OriginTime[( foundidx + 1 ) & ORIGIN_MASK] - ViewInterp.OriginTime[foundidx & ORIGIN_MASK];
-			if( dt > 0.0 )
-			{
-				frac = ( t - ViewInterp.OriginTime[foundidx & ORIGIN_MASK] ) / dt;
-				frac = min( 1.0, frac );
-				VectorSubtract( ViewInterp.Origins[( foundidx + 1 ) & ORIGIN_MASK], ViewInterp.Origins[foundidx & ORIGIN_MASK], delta );
-				VectorMA( ViewInterp.Origins[foundidx & ORIGIN_MASK], frac, delta, neworg );
-
-				// Dont interpolate large changes
-				if( Length( delta ) < 64 )
-				{
-					VectorSubtract( neworg, pparams->simorg, delta );
-
-					VectorAdd( pparams->simorg, delta, pparams->simorg );
-					VectorAdd( pparams->vieworg, delta, pparams->vieworg );
-					VectorAdd( view->origin, delta, view->origin );
-				}
-			}
 		}
 	}
 
